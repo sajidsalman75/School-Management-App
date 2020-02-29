@@ -11,8 +11,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class AddClassActivity extends AppCompatActivity {
     private EditText etTitle;
@@ -36,13 +40,27 @@ public class AddClassActivity extends AppCompatActivity {
     public void addClassClicked(View view) {
         if (!etTitle.getText().toString().isEmpty()){
             final String key = classesReference.push().getKey();
-            classesReference.child(key).child("title").setValue(etTitle.getText().toString()).addOnCompleteListener(AddClassActivity.this, new OnCompleteListener<Void>() {
+            Query query = classesReference.orderByChild("title").equalTo(etTitle.getText().toString());
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Toast.makeText(AddClassActivity.this, "New Class added successfully!", Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(AddClassActivity.this, ClassesActivity.class);
-                    startActivity(i);
-                    finish();
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getChildrenCount() == 0){
+                        classesReference.child(key).child("title").setValue(etTitle.getText().toString()).addOnCompleteListener(AddClassActivity.this, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(AddClassActivity.this, "New Class added successfully!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    }
+                    else{
+                        Toast.makeText(AddClassActivity.this, "This Class has already been added!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
                 }
             });
         }

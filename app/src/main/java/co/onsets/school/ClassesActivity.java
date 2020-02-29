@@ -26,7 +26,6 @@ public class ClassesActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ClassListAdapter mAdapter;
     private List<ClassModel> classModelList = new ArrayList<>();
-    private FirebaseDatabase firebaseDatabase;
     private DatabaseReference classesReference;
 
     @Override
@@ -39,7 +38,7 @@ public class ClassesActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         classesReference = firebaseDatabase.getReference("classes");
         classModelList.clear();
         prepareMovieData();
