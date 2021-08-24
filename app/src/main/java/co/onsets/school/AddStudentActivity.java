@@ -15,6 +15,7 @@ public class AddStudentActivity extends AppCompatActivity {
     private DatabaseReference studentsReference;
     private EditText etName, etGuardianName, etRollNumber, etPhoneNumber;
     private String classId;
+    private long fee;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class AddStudentActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent != null){
             classId = intent.getStringExtra("id");
+            fee = intent.getLongExtra("fee", 0);
         }
 
         etName = findViewById(R.id.etName);
@@ -51,6 +53,7 @@ public class AddStudentActivity extends AppCompatActivity {
             studentsReference.child(key).child("roll_number").setValue(etRollNumber.getText().toString());
             studentsReference.child(key).child("guardian_name").setValue(etGuardianName.getText().toString());
             studentsReference.child(key).child("class_id").setValue(classId);
+            studentsReference.child(key).child("fee").setValue(fee);
             Toast.makeText(AddStudentActivity.this, "New student added successfully", Toast.LENGTH_SHORT).show();
             finish();
         }

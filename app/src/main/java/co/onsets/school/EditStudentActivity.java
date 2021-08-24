@@ -13,8 +13,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class EditStudentActivity extends AppCompatActivity {
     private DatabaseReference studentsReference;
-    private EditText etName, etGuardianName, etRollNumber, etPhoneNumber;
+    private EditText etName, etGuardianName, etRollNumber, etPhoneNumber, etFee;
     private String studentId, rollNumber, name, guardianName, phoneNumber;
+    private long fee;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +29,11 @@ public class EditStudentActivity extends AppCompatActivity {
             name = intent.getStringExtra("name");
             guardianName = intent.getStringExtra("guardianName");
             phoneNumber = intent.getStringExtra("phoneNumber");
+            fee = intent.getLongExtra("fee", 0);
         }
         else{
             studentId = rollNumber = name = guardianName = phoneNumber = "";
+            fee = 0;
         }
 
         etName = findViewById(R.id.etName);
@@ -41,6 +44,8 @@ public class EditStudentActivity extends AppCompatActivity {
         etPhoneNumber.setText(phoneNumber);
         etRollNumber = findViewById(R.id.etRollNumber);
         etRollNumber.setText(rollNumber);
+        etFee = findViewById(R.id.etFee);
+        etFee.setText(String.valueOf(fee));
     }
 
     @Override
@@ -50,12 +55,10 @@ public class EditStudentActivity extends AppCompatActivity {
         studentsReference = firebaseDatabase.getReference("students");
     }
 
-    public void deleteClassClicked(View view) {
-    }
-
     public void editStudentClicked(View view) {
         if (etName.getText().toString().isEmpty() && etRollNumber.getText().toString().isEmpty() &&
-                etPhoneNumber.getText().toString().isEmpty() && etGuardianName.getText().toString().isEmpty()){
+                etPhoneNumber.getText().toString().isEmpty() && etGuardianName.getText().toString().isEmpty() &&
+        etFee.getText().toString().isEmpty()){
             Toast.makeText(EditStudentActivity.this, "Kindly fill all the fields!", Toast.LENGTH_SHORT).show();
         }
         else{
@@ -63,8 +66,15 @@ public class EditStudentActivity extends AppCompatActivity {
             studentsReference.child(studentId).child("phone_number").setValue(etPhoneNumber.getText().toString());
             studentsReference.child(studentId).child("roll_number").setValue(etRollNumber.getText().toString());
             studentsReference.child(studentId).child("guardian_name").setValue(etGuardianName.getText().toString());
+            studentsReference.child(studentId).child("fee").setValue(Long.parseLong(etFee.getText().toString()));
             Toast.makeText(EditStudentActivity.this, "Student updated successfully", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    public void deleteStudentClicked(View view) {
+        studentsReference.child(studentId).removeValue();
+        Toast.makeText(EditStudentActivity.this, "Student deleted successfully", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

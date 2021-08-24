@@ -51,17 +51,18 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
     public void onBindViewHolder(StudentListAdapter.MyViewHolder holder, int position) {
         final Student student = studentList.get(position);
         holder.tvName.setText(student.getName());
-        holder.tvRollNumber.setText(student.getRollNumber());
-        holder.tvGuardianName.setText(student.getGuardianName());
+        holder.tvRollNumber.setText(student.getRoll_number());
+        holder.tvGuardianName.setText(student.getGuardian_name());
         holder.rr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(context, EditStudentActivity.class);
                 i.putExtra("id", student.getId());
                 i.putExtra("name", student.getName());
-                i.putExtra("rollNumber", student.getRollNumber());
-                i.putExtra("guardianName", student.getGuardianName());
-                i.putExtra("phoneNumber", student.getPhoneNumber());
+                i.putExtra("rollNumber", student.getRoll_number());
+                i.putExtra("guardianName", student.getGuardian_name());
+                i.putExtra("phoneNumber", student.getPhone_number());
+                i.putExtra("fee", student.getFee());
                 context.startActivity(i);
             }
         });

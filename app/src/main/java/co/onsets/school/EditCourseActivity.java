@@ -65,7 +65,7 @@ public class EditCourseActivity extends AppCompatActivity {
             myTopPostsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getChildrenCount() > 0){
+                    if (dataSnapshot.getChildrenCount() > 0 || dataSnapshot.getValue() == null){
                         coursesReference.child(id).child("total_marks").setValue(Long.parseLong(etTotalMarks.getText().toString()));
                         coursesReference.child(id).child("title").setValue(etTitle.getText().toString()).addOnCompleteListener(EditCourseActivity.this, new OnCompleteListener<Void>() {
                             @Override

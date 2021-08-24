@@ -18,9 +18,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import co.onsets.school.Model.ClassModel;
+
 public class EditClassActivity extends AppCompatActivity {
-    private EditText etTitle;
+    private EditText etTitle, etFee;
     private String id, title;
+    private long fee;
     private DatabaseReference classesReference, classCoursesReference, studentsReference;
 
     @Override
@@ -32,13 +35,17 @@ public class EditClassActivity extends AppCompatActivity {
         if (intent != null){
             id = intent.getStringExtra("id");
             title = intent.getStringExtra("title");
+            fee = intent.getLongExtra("fee", 0);
         }
         else{
             id = "";
             title = "";
+            fee = 0;
         }
 
         etTitle = findViewById(R.id.etTitle);
+        etFee = findViewById(R.id.etFee);
+        etFee.setText(String.valueOf(fee));
         etTitle.setText(title);
     }
 
@@ -48,6 +55,7 @@ public class EditClassActivity extends AppCompatActivity {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         classesReference = firebaseDatabase.getReference("classes");
         classCoursesReference = firebaseDatabase.getReference("class_courses");
+        studentsReference = firebaseDatabase.getReference("students");
     }
 
     public void editClassClicked(View view) {
@@ -56,12 +64,29 @@ public class EditClassActivity extends AppCompatActivity {
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getChildrenCount() == 0){
-                        classesReference.child(id).child("title").setValue(etTitle.getText().toString()).addOnCompleteListener(EditClassActivity.this, new OnCompleteListener<Void>() {
+                    String checkId = "";
+                    for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                        checkId = postSnapshot.getKey();
+                    }
+                    if (dataSnapshot.getChildrenCount() == 0 || id.contentEquals(checkId)){
+                        ClassModel classModel = new ClassModel(null, etTitle.getText().toString(), Long.parseLong(etFee.getText().toString()));
+                        classesReference.child(id).setValue(classModel).addOnCompleteListener(EditClassActivity.this, new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(EditClassActivity.this, "Class updated successfully!", Toast.LENGTH_SHORT).show();
-                                finish();
+                                Query getStudentOfClass = studentsReference.orderByChild("class_id").equalTo(id);
+                                getStudentOfClass.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                                        for(DataSnapshot childSnapshot : dataSnapshot1.getChildren()){
+                                            studentsReference.child(childSnapshot.getKey()).child("fee").setValue(Long.parseLong(etFee.getText().toString()));
+                                        }
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                                });
                             }
                         });
                     }

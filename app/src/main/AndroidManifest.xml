@@ -11,16 +11,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditStudentActivity"></activity>
+        <activity android:name=".FeeListActivity" />
+        <activity android:name=".EditStudentActivity" />
         <activity android:name=".EditClassActivity" />
         <activity android:name=".EditCourseActivity" />
         <activity android:name=".CourseSelectionActivity" />
         <activity android:name=".AttendanceActivity" />
         <activity android:name=".ResultListActivity" />
         <activity android:name=".ResultActivity" />
-        <activity android:name=".MainDashboardActivity">
-
-        </activity>
+        <activity android:name=".MainDashboardActivity" />
         <activity android:name=".AddCourseActivity" />
         <activity android:name=".CoursesListActivity" />
         <activity android:name=".StudentsListActivity" />
@@ -31,7 +30,9 @@
         <activity android:name=".AddClassActivity" />
         <activity android:name=".ClassesActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".SplashActivity" android:theme="@style/AppTheme.Launcher">
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

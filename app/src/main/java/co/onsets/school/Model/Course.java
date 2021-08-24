@@ -1,5 +1,11 @@
 package co.onsets.school.Model;
 
+import androidx.annotation.Keep;
+
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
+@Keep
 public class Course {
     private String id, title;
     private Boolean isSelected, isGainedValidated;

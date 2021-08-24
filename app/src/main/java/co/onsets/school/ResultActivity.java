@@ -12,7 +12,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +41,8 @@ import co.onsets.school.Model.Student;
 
 public class ResultActivity extends AppCompatActivity {
     private String id, name, guardianName, phoneNumber, rollNumber, classId, classTitle;
-    private TextView tvName, tvRollNumber, tvGuardianName, tvClassTitle;
+    private TextView tvName, tvRollNumber, tvGuardianName, tvClassTitle, tvNoteLimit;
+    private EditText etNote;
     RecyclerView rvCourses;
     private CourseResultAdapter mAdapter;
     private List<Course> courseList = new ArrayList<>();
@@ -57,7 +61,22 @@ public class ResultActivity extends AppCompatActivity {
         tvRollNumber = findViewById(R.id.tvRollNumber);
         rvCourses = findViewById(R.id.rv_courses);
         tvClassTitle = findViewById(R.id.tvClassTitle);
+        tvNoteLimit = findViewById(R.id.tvNoteLimit);
+        etNote = findViewById(R.id.etNote);
+        tvNoteLimit.setText("0/145");
 
+        etNote.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tvNoteLimit.setText(String.valueOf(etNote.length()) + "/145");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
         if (intent != null){
             id = intent.getStringExtra("id");
             name = intent.getStringExtra("name");
@@ -104,7 +123,7 @@ public class ResultActivity extends AppCompatActivity {
                                 courseList.add(course);
                             }
                             mAdapter = new CourseResultAdapter(ResultActivity.this, courseList);
-                            rvCourses.setHasFixedSize(true);
+                            //rvCourses.setHasFixedSize(true);
                             rvCourses.setLayoutManager(new LinearLayoutManager(ResultActivity.this));
                             rvCourses.setAdapter(mAdapter);
                             mAdapter.notifyDataSetChanged();
@@ -135,56 +154,70 @@ public class ResultActivity extends AppCompatActivity {
 
     public void sendSMS() {
         try {
-            Boolean isValidMarks = true;
-            String message = "Al Hadi Academy\n";
-            String message1 = "";
-            message = message + "Roll Number: " + rollNumber + "\n";
-            message = message + "Name: " + name + "\n";
-            message = message + "S/D/O: " + guardianName + "\n";
-            message = message + "Class: " + classTitle + "\n";
-            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-            Date date = new Date();
-            long totalGainedMarks = 0, totalMarks = 0;
-            for (int i = 0 ; i < courseList.size() ; i++){
-                if (courseList.get(i).getGainedMarks()!= -1){
-                    if (message.length() <= 120){
-                        message = message + courseList.get(i).getTitle() + " " + courseList.get(i).getGainedMarks()
-                                + "/" + courseList.get(i).getTotalMarks() + "\n";
+            if (etNote.length() <= 145){
+                if(courseList.size() > 0){
+                    boolean isValidMarks = true;
+                    String message = "Al Hadi Academy\n";
+                    String message1 = "";
+                    message = message + "Roll Number: " + rollNumber + "\n";
+                    message = message + "Name: " + name + "\n";
+                    message = message + "S/D/O: " + guardianName + "\n";
+                    message = message + "Class: " + classTitle + "\n";
+                    DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                    Date date = new Date();
+                    long totalGainedMarks = 0, totalMarks = 0;
+                    for (int i = 0 ; i < courseList.size() ; i++){
+                        if (courseList.get(i).getGainedMarks()!= -1){
+                            if (message.length() <= 120){
+                                message = message + courseList.get(i).getTitle() + " " + courseList.get(i).getGainedMarks()
+                                        + "/" + courseList.get(i).getTotalMarks() + "\n";
+                            }
+                            else{
+                                message1 = message1 + courseList.get(i).getTitle() + " " + courseList.get(i).getGainedMarks()
+                                        + "/" + courseList.get(i).getTotalMarks() + "\n";
+                            }
+                            totalGainedMarks = totalGainedMarks + courseList.get(i).getGainedMarks();
+                            totalMarks = totalMarks + courseList.get(i).getTotalMarks();
+                        }
+                        if (courseList.get(i).getGainedMarks() > courseList.get(i).getTotalMarks()){
+                            isValidMarks = false;
+                        }
+                    }
+                    if (isValidMarks && courseList.size() > 0){
+                        if (message.length() <= 120 && message1.isEmpty()){
+                            double percentage = ((double) totalGainedMarks/totalMarks) * 100.0;
+                            message = message + "Total Marks: " + totalGainedMarks + "/" + totalMarks + "(" +
+                                     percentage + ")";
+                        }
+                        else{
+                            double percentage = (Double.longBitsToDouble(totalGainedMarks)/Double.longBitsToDouble(totalMarks)) * 100.0;
+                            long percentage1 = Math.round(percentage);
+                            message1 = message1 + "Total Marks: " + totalGainedMarks + "/" + totalMarks + "(" +
+                                    percentage1 + ")";
+                        }
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+                        if (!message1.isEmpty()){
+                            smsManager.sendTextMessage(phoneNumber, null, message1, null, null);
+                        }
+                        if(!etNote.getText().toString().isEmpty()){
+                            smsManager.sendTextMessage(phoneNumber, null, "Note:\n" + etNote.getText().toString(), null, null);
+                        }
+                        Toast.makeText(getApplicationContext(), "Messages Sent",
+                                Toast.LENGTH_LONG).show();
+                        finish();
                     }
                     else{
-                        message1 = message1 + courseList.get(i).getTitle() + " " + courseList.get(i).getGainedMarks()
-                                + "/" + courseList.get(i).getTotalMarks() + "\n";
+                        Toast.makeText(getApplicationContext(), "Marks are not valid!",
+                                Toast.LENGTH_LONG).show();
                     }
-                    totalGainedMarks = totalGainedMarks + courseList.get(i).getGainedMarks();
-                    totalMarks = totalMarks + courseList.get(i).getTotalMarks();
-                }
-                if (courseList.get(i).getGainedMarks() > courseList.get(i).getTotalMarks()){
-                    isValidMarks = false;
-                }
-            }
-            if (isValidMarks){
-                if (message.length() <= 120 && message1.isEmpty()){
-                    message = message + "Total Marks: " + totalGainedMarks + "/" + totalMarks + "(" +
-                            totalGainedMarks/totalMarks * 100 + ")";
                 }
                 else{
-                    double percentage = (Double.longBitsToDouble(totalGainedMarks)/Double.longBitsToDouble(totalMarks)) * 100.0;
-                    long percentage1 = Math.round(percentage);
-                    message1 = message1 + "Total Marks: " + totalGainedMarks + "/" + totalMarks + "(" +
-                            percentage1 + ")";
+                    Toast.makeText(getApplicationContext(), "No courses found!", Toast.LENGTH_LONG).show();
                 }
-                SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(phoneNumber, null, message, null, null);
-                if (!message1.isEmpty()){
-                    smsManager.sendTextMessage(phoneNumber, null, message1, null, null);
-                }
-                Toast.makeText(getApplicationContext(), "Messages Sent",
-                        Toast.LENGTH_LONG).show();
-                finish();
             }
             else{
-                Toast.makeText(getApplicationContext(), "Marks are not valid!",
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.note_length_warning), Toast.LENGTH_LONG).show();
             }
         } catch (Exception ex) {
             Toast.makeText(getApplicationContext(),ex.getMessage(),

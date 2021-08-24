@@ -119,4 +119,9 @@
     <string name="update">Update</string>
     <string name="edit_class">Edit Class</string>
     <string name="edit_student">Edit Student</string>
+    <string name="note">Note</string>
+    <string name="note_length_warning">Note should be smaller than or equal to 145!</string>
+    <string name="fee">Fee</string>
+    <string name="add_fee">Add Fee</string>
+    <string name="send_fee_sms">Send fee SMS</string>
 </resources>

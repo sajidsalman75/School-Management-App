@@ -51,7 +51,10 @@ public class ClassesActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     ClassModel classModel = new ClassModel();
-                    classModel.setTitle(postSnapshot.child("title").getValue(String.class));
+                    classModel = postSnapshot.getValue(ClassModel.class);
+                    if (!postSnapshot.hasChild("fee")){
+                        classModel.setFee(0);
+                    }
                     classModel.setId(postSnapshot.getKey());
                     classModelList.add(classModel);
                 }

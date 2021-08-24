@@ -53,6 +53,7 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.MyVi
                 Intent i = new Intent(context, ClassDashboardActivity.class);
                 i.putExtra("id", classModel.getId());
                 i.putExtra("title", classModel.getTitle());
+                i.putExtra("fee", classModel.getFee());
                 context.startActivity(i);
             }
         });

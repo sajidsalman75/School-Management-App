@@ -8,52 +8,55 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import co.onsets.school.EditStudentActivity;
 import co.onsets.school.Model.Student;
 import co.onsets.school.R;
 
-public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.MyViewHolder> {
+public class FeeAdapter extends RecyclerView.Adapter<FeeAdapter.MyViewHolder> {
     private List<Student> studentList;
     private Context context;
-    class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvGuardianName, tvRollNumber;
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView tvName, tvGuardianName, tvRollNumber, tvFee;
+        public RelativeLayout rr;
         ImageView ivDone;
-        RelativeLayout rr;
-        MyViewHolder(View view) {
+        public MyViewHolder(View view) {
             super(view);
             tvName = view.findViewById(R.id.tvName);
             tvGuardianName = view.findViewById(R.id.tvGuardianName);
             tvRollNumber = view.findViewById(R.id.tvRollNumber);
+            tvFee = view.findViewById(R.id.tvFee);
             ivDone = view.findViewById(R.id.ivDone);
             rr = view.findViewById(R.id.rr);
         }
     }
 
 
-    public AttendanceAdapter(Context context, List<Student> studentList) {
+    public FeeAdapter(Context context, List<Student> studentList) {
         this.studentList = studentList;
         this.context = context;
     }
 
     @Override
-    public AttendanceAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public FeeAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.students_list_row, parent, false);
 
-        return new AttendanceAdapter.MyViewHolder(itemView);
+        return new FeeAdapter.MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final AttendanceAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(final FeeAdapter.MyViewHolder holder, int position) {
         final Student student = studentList.get(position);
         holder.tvName.setText(student.getName());
         holder.tvRollNumber.setText(student.getRoll_number());
         holder.tvGuardianName.setText(student.getGuardian_name());
+        holder.tvFee.setText(String.valueOf(student.getDue_fee()));
+        holder.tvFee.setVisibility(View.VISIBLE);
         holder.rr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

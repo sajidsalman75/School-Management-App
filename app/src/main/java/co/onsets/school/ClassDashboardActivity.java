@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 public class ClassDashboardActivity extends AppCompatActivity {
     private String id, title;
+    private long fee;
     private TextView tvClassTitle;
 
     @Override
@@ -22,8 +23,14 @@ public class ClassDashboardActivity extends AppCompatActivity {
         if (intent != null){
             id = intent.getStringExtra("id");
             title = intent.getStringExtra("title");
-            tvClassTitle.setText(title);
+            fee = intent.getLongExtra("fee", 0);
         }
+        else{
+            id = "";
+            title = "";
+            fee = 0;
+        }
+        tvClassTitle.setText(title);
     }
 
     public void coursesClicked(View view) {
@@ -36,6 +43,7 @@ public class ClassDashboardActivity extends AppCompatActivity {
     public void studentsClicked(View view) {
         Intent i = new Intent(ClassDashboardActivity.this, StudentsListActivity.class);
         i.putExtra("id", id);
+        i.putExtra("fee", fee);
         startActivity(i);
     }
 
@@ -57,6 +65,13 @@ public class ClassDashboardActivity extends AppCompatActivity {
         Intent i = new Intent(ClassDashboardActivity.this, EditClassActivity.class);
         i.putExtra("id", id);
         i.putExtra("title", title);
+        i.putExtra("fee", fee);
+        startActivity(i);
+    }
+
+    public void feeClicked(View view) {
+        Intent i = new Intent(ClassDashboardActivity.this, FeeListActivity.class);
+        i.putExtra("id", id);
         startActivity(i);
     }
 }

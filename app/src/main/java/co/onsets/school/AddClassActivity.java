@@ -18,8 +18,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import co.onsets.school.Model.ClassModel;
+
 public class AddClassActivity extends AppCompatActivity {
-    private EditText etTitle;
+    private EditText etTitle, etFee;
     private DatabaseReference classesReference;
 
     @Override
@@ -28,6 +30,7 @@ public class AddClassActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_class);
 
         etTitle = findViewById(R.id.etTitle);
+        etFee = findViewById(R.id.etFee);
     }
 
     @Override
@@ -40,12 +43,16 @@ public class AddClassActivity extends AppCompatActivity {
     public void addClassClicked(View view) {
         if (!etTitle.getText().toString().isEmpty()){
             final String key = classesReference.push().getKey();
+            if(etFee.getText().toString().contentEquals("")){
+                etFee.setText(0);
+            }
+            final ClassModel classModel = new ClassModel(null, etTitle.getText().toString(), Long.parseLong(etFee.getText().toString()));
             Query query = classesReference.orderByChild("title").equalTo(etTitle.getText().toString());
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getChildrenCount() == 0){
-                        classesReference.child(key).child("title").setValue(etTitle.getText().toString()).addOnCompleteListener(AddClassActivity.this, new OnCompleteListener<Void>() {
+                        classesReference.child(key).setValue(classModel).addOnCompleteListener(AddClassActivity.this, new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(AddClassActivity.this, "New Class added successfully!", Toast.LENGTH_SHORT).show();

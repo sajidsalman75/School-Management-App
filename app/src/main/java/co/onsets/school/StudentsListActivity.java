@@ -27,6 +27,8 @@ public class StudentsListActivity extends AppCompatActivity {
     private List<Student> studentList = new ArrayList<>();
     private DatabaseReference studentsReference;
     private String classid;
+    private long fee;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +37,7 @@ public class StudentsListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null){
             classid = intent.getStringExtra("id");
+            fee = intent.getLongExtra("fee", 0);
         }
         recyclerView = findViewById(R.id.recycler_view);
     }
@@ -55,11 +58,7 @@ public class StudentsListActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     Student student = new Student();
-                    student.setName(postSnapshot.child("name").getValue(String.class));
-                    student.setGuardianName(postSnapshot.child("guardian_name").getValue(String.class));
-                    student.setPhoneNumber(postSnapshot.child("phone_number").getValue(String.class));
-                    student.setRollNumber(postSnapshot.child("roll_number").getValue(String.class));
-                    student.setClassId(postSnapshot.child("class_id").getValue(String.class));
+                    student = postSnapshot.getValue(Student.class);
                     student.setId(postSnapshot.getKey());
                     studentList.add(student);
                 }
@@ -89,6 +88,7 @@ public class StudentsListActivity extends AppCompatActivity {
     public void addStudentClicked(View view) {
         Intent i = new Intent(StudentsListActivity.this, AddStudentActivity.class);
         i.putExtra("id", classid);
+        i.putExtra("fee", fee);
         startActivity(i);
     }
 }

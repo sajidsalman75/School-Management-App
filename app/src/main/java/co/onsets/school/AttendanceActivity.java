@@ -38,7 +38,7 @@ public class AttendanceActivity extends AppCompatActivity {
     private List<Student> studentList = new ArrayList<>();
     private DatabaseReference studentsReference;
     private String classid;
-    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0;
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class AttendanceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_attendance);
 
         Intent intent = getIntent();
-        if (intent != null){
+        if (intent != null) {
             classid = intent.getStringExtra("id");
         }
         recyclerView = findViewById(R.id.recycler_view);
@@ -66,12 +66,9 @@ public class AttendanceActivity extends AppCompatActivity {
         myTopPostsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Student student = new Student();
-                    student.setName(postSnapshot.child("name").getValue(String.class));
-                    student.setGuardianName(postSnapshot.child("guardian_name").getValue(String.class));
-                    student.setPhoneNumber(postSnapshot.child("phone_number").getValue(String.class));
-                    student.setRollNumber(postSnapshot.child("roll_number").getValue(String.class));
+                    student = postSnapshot.getValue(Student.class);
                     student.setId(postSnapshot.getKey());
                     studentList.add(student);
                 }
@@ -81,10 +78,9 @@ public class AttendanceActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(new LinearLayoutManager(AttendanceActivity.this));
                 recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
-                if (studentList.size() == 0){
+                if (studentList.size() == 0) {
                     recyclerView.setVisibility(View.GONE);
-                }
-                else{
+                } else {
                     recyclerView.setVisibility(View.VISIBLE);
                 }
             }
@@ -102,25 +98,23 @@ public class AttendanceActivity extends AppCompatActivity {
 
     public void sendSMS() {
         try {
-            for (int i = 0 ; i < studentList.size() ; i++){
-                String message;
-                DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-                Date date = new Date();
-                if (studentList.get(i).getSelected()){
-                    message = studentList.get(i).getName() + " is present in Al Hadi Academy today Dated: "
-                    + dateFormat.format(date);
-                }
-                else{
-                    message = studentList.get(i).getName() + " is absent from Al Hadi Academy today Dated: "
+            for (int i = 0; i < studentList.size(); i++) {
+                if (studentList.get(i).getSelected()) {
+//                    message = studentList.get(i).getName() + " is present in Al Hadi Academy today Dated: "
+//                    + dateFormat.format(date);
+                } else {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    Date date = new Date();
+                    String message = studentList.get(i).getName() + "\n" + " آج الھادی فاؤنڈیشن اینڈ اکیڈمی سے غیر حاضر ہے۔\n تاریخ: "
                             + dateFormat.format(date);
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(studentList.get(i).getPhone_number(), null, message, null, null);
                 }
-                SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(studentList.get(i).getPhoneNumber(), null, message, null, null);
             }
             Toast.makeText(getApplicationContext(), "Messages Sent",
                     Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            Toast.makeText(getApplicationContext(),ex.getMessage(),
+            Toast.makeText(getApplicationContext(), ex.getMessage(),
                     Toast.LENGTH_LONG).show();
             ex.printStackTrace();
         }
@@ -137,14 +131,13 @@ public class AttendanceActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.SEND_SMS},
                         MY_PERMISSIONS_REQUEST_SEND_SMS);
             }
-        }
-        else{
+        } else {
             sendSMS();
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_SEND_SMS: {
                 if (grantResults.length > 0
@@ -152,7 +145,7 @@ public class AttendanceActivity extends AppCompatActivity {
                     sendSMS();
                 } else {
                     Toast.makeText(getApplicationContext(),
-                            "SMS faild, please try again.", Toast.LENGTH_LONG).show();
+                            "SMS failed, please try again.", Toast.LENGTH_LONG).show();
                     return;
                 }
             }

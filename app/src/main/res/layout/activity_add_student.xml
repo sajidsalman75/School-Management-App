@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"/>
         <EditText
             android:id="@+id/etRollNumber"
-            android:inputType="text"
+            android:inputType="number"
             android:layout_marginBottom="20dp"
             android:hint="@string/roll_number"
             android:textColor="@color/colorPrimary"

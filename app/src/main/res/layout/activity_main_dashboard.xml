@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/rlRoot"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorWhite"
@@ -93,4 +94,22 @@
             </RelativeLayout>
         </ScrollView>
     </RelativeLayout>
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_margin="16dp"
+        android:id="@+id/btnSendFeeSMS"
+        android:text="@string/send_fee_sms"
+        android:layout_gravity="bottom|start"
+        app:icon="@drawable/ic_message_black_24dp"
+        android:onClick="feeSmsClicked"
+        android:layout_height="wrap_content" />
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/addFee"
+        android:text="@string/add_fee"
+        android:layout_gravity="bottom|end"
+        android:layout_width="wrap_content"
+        android:onClick="addFeeClicked"
+        android:layout_margin="16dp"
+        app:icon="@drawable/ic_add_black_24dp"
+        android:layout_height="wrap_content"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
