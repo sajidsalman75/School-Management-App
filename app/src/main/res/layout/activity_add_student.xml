@@ -27,6 +27,7 @@
             android:id="@+id/etName"
             android:inputType="textPersonName"
             android:layout_marginBottom="10dp"
+            android:maxLength="39"
             android:hint="@string/name"
             android:textColor="@color/colorPrimary"
             android:background="@drawable/custom_edit_text"
@@ -35,6 +36,7 @@
         <EditText
             android:id="@+id/etGuardianName"
             android:inputType="textPersonName"
+            android:maxLength="39"
             android:layout_marginBottom="10dp"
             android:hint="@string/guardianName"
             android:textColor="@color/colorPrimary"

@@ -105,14 +105,16 @@ public class AttendanceActivity extends AppCompatActivity {
                 } else {
                     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     Date date = new Date();
-                    String message = studentList.get(i).getName() + "\n" + " آج الھادی فاؤنڈیشن اینڈ اکیڈمی سے غیر حاضر ہے۔\n تاریخ: "
+                    String message = "Al-Hadi Foundation and academy" +  "\n"  + studentList.get(i).getName() + " is absent.\n" + "Dated: "
                             + dateFormat.format(date);
                     SmsManager smsManager = SmsManager.getDefault();
                     smsManager.sendTextMessage(studentList.get(i).getPhone_number(), null, message, null, null);
                 }
+                if(i == studentList.size()-1){
+                    Toast.makeText(getApplicationContext(), "Messages Sent",
+                            Toast.LENGTH_LONG).show();
+                }
             }
-            Toast.makeText(getApplicationContext(), "Messages Sent",
-                    Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
             Toast.makeText(getApplicationContext(), ex.getMessage(),
                     Toast.LENGTH_LONG).show();
@@ -138,6 +140,7 @@ public class AttendanceActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_SEND_SMS: {
                 if (grantResults.length > 0

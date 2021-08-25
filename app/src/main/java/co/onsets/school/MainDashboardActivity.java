@@ -105,11 +105,11 @@ public class MainDashboardActivity extends AppCompatActivity {
                                 student.setId(childSnapshot.getKey());
                                 if(student.getDue_fee() > 0){
                                     SmsManager smsManager = SmsManager.getDefault();
-                                    String message = "الھادی فاؤنڈیشن اینڈ اکیڈمی\n";
-                                    //message = message + "رول نمبر: " + student.getRoll_number() + "\n";
-                                    message = message + student.getName() + "-" + classModel.getTitle() + "\n";
-                                    //message = message + "والد کا نام: " + student.getGuardian_name() + "\n";
-                                    message = message + "اپنی فیس ادا کریں.";
+                                    String message = "Al-Hadi Foundation and academy\n";
+                                    message = message + student.getName() + "\n";
+                                    message = message + "S/D/O: " + student.getGuardian_name() + "\n";
+                                    message = message + "Class: " + classModel.getTitle() + "\n";
+                                    message = message + "Kindly pay your fee of " + student.getDue_fee() + "/-";
                                     smsManager.sendTextMessage(student.getPhone_number(), null, message, null, null);
                                 }
                             }
